@@ -30,10 +30,60 @@ const Events: NextPage = () => {
     fromBlock: 0n,
   });
 
+  const { data: approveEvents, isLoading: isapproveEventsLoading } = useScaffoldEventHistory({
+    contractName: "Balloons",
+    eventName: "Approval",
+    fromBlock: 0n,
+  });
+
+
   return (
     <>
       <MetaHeader />
-      <div className="flex items-center flex-col flex-grow pt-10">
+      <div className="flex items-center flex-col flex-grow pt-10" >
+        {isapproveEventsLoading ? (
+          <div className="flex justify-center items-center mt-10">
+            <Spinner width="75" height="75" />
+          </div>
+        ) : (
+          <div style={{ marginBottom: '28px' }}>
+            <div className="text-center mb-4">
+              <span className="block text-2xl font-bold">Approve Events</span>
+            </div>
+            <div className="overflow-x-auto shadow-lg">
+              <table className="table table-zebra w-full">
+                <thead>
+                  <tr>
+                    <th className="bg-primary">Swapper</th>
+                    <th className="bg-primary">Address</th>
+                    <th className="bg-primary">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {!approveEvents || approveEvents.length === 0 ? (
+                    <tr>
+                      <td colSpan={3} className="text-center">
+                        No events found
+                      </td>
+                    </tr>
+                  ) : (
+                    approveEvents?.map((event, index) => {
+                      return (
+                        <tr key={index}>
+                          <td className="text-center">
+                            <Address address={event.args.owner} />
+                          </td>
+                          <td>{(event.args.owner)}</td>
+                          <td>{parseFloat(formatEther(event.args.value)).toFixed(4)}</td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
         {isEthToTokenEventsLoading ? (
           <div className="flex justify-center items-center mt-10">
             <Spinner width="75" height="75" />
